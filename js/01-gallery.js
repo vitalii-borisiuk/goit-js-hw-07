@@ -7,7 +7,10 @@ const galleryContainer = document.querySelector('.gallery');
 const galleryMarkup = createGalleryItemMarkup(galleryItems);
 
 galleryContainer.insertAdjacentHTML('beforeend', galleryMarkup);
-galleryContainer.addEventListener('click', inModalOpen);
+galleryContainer.addEventListener('click', onItemClickAction);
+
+
+
 
 function createGalleryItemMarkup(galleryItems) {
     return galleryItems.map(({ preview, original, description }) =>
@@ -25,24 +28,33 @@ function createGalleryItemMarkup(galleryItems) {
     </div>`;
     })
         .join('');
-}
-function onItemClickAction (event) {
-  if(!event.target.classList.contains('gallery__item')){
+};
+
+
+function onItemClickAction(event) {
+  blockDefaultAction(event);
+
+  if (event.target.nodeName !== "IMG") {
     return;
-  }
-  console.log(event.target);
-};
-
-function inModalOpen() {
+  };
+ 
   const instance = basicLightbox.create(`
-    <div class="modal">
-        <p>
-            Your first lightbox with just a few lines of code.
-            Yes, it's really that simple.
-        </p>
-    </div>
-`);
-
+		<img src="${event.target.dataset.source}">
+	`);
   instance.show();
-  
+
+
+  window.addEventListener('keydown', onKeypress);
+function onKeypress(evt) {
+  if (evt.code === 'Escape') {
+    instance.close();
+  };
 };
+
+};
+
+function blockDefaultAction(evt) {
+  evt.preventDefault();
+};
+
+
